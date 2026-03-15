@@ -95,29 +95,58 @@ def playout(**kw):
     return base
 
 def header():
-    st.markdown(f"""
+    st.html(f"""
     <div style="background:linear-gradient(135deg,{DB},{MB});border:2px solid {GD};
-                border-radius:12px;padding:1.4rem 2rem;margin-bottom:1.2rem;text-align:center;">
-      <h1 style="font-family:'Playfair Display',serif;color:{GD};margin:0;font-size:1.9rem;">
+                border-radius:12px;padding:1.4rem 2rem;margin-bottom:1.2rem;text-align:center;
+                user-select:none;">
+      <p style="font-family:'Playfair Display',serif;color:{GD};
+                -webkit-text-fill-color:{GD};margin:0;font-size:1rem;font-weight:700;">
+        🏔️ The Mountain Path — World of Finance
+      </p>
+      <h1 style="font-family:'Playfair Display',serif;color:{GD};
+                 -webkit-text-fill-color:{GD};margin:0.3rem 0;font-size:1.9rem;">
         📊 FCFF &amp; APV Dynamic Valuation Model
       </h1>
-      <p style="color:{LB};margin:0.4rem 0 0;font-size:0.95rem;font-weight:600;">
+      <p style="color:{LB};-webkit-text-fill-color:{LB};margin:0.4rem 0 0;
+                font-size:0.95rem;font-weight:600;">
         Free Cash Flow to Firm  ·  WACC Method  ·  Adjusted Present Value
       </p>
-      <p style="color:{TS};margin:0.2rem 0 0;font-size:0.82rem;">
-        NMIMS Bangalore  ·  Corporate Finance  ·  Capital Structure &amp; Valuation
+      <p style="color:{TS};-webkit-text-fill-color:{TS};margin:0.25rem 0 0;font-size:0.82rem;">
+        Prof. V. Ravichandran  ·  28+ Years Corporate Finance &amp; Banking  ·  10+ Years Academic Excellence
       </p>
-    </div>""", unsafe_allow_html=True)
+      <p style="color:{TS};-webkit-text-fill-color:{TS};margin:0.15rem 0 0;font-size:0.78rem;">
+        Visiting Faculty: NMIMS Bangalore  ·  BITS Pilani  ·  RV University Bangalore  ·  Goa Institute of Management
+      </p>
+    </div>""")
 
 def footer():
     st.divider()
-    st.markdown(f"""
-    <div style="text-align:center;padding:1rem;">
-      <p style="color:{GD};font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;margin:0;">
-        📊 FCFF &amp; APV Valuation Model  ·  NMIMS Bangalore</p>
-      <p style="color:{TS};font-size:0.8rem;margin:0.3rem 0 0;">
-        Corporate Finance  ·  Capital Structure &amp; Valuation  ·  MBA Programme</p>
-    </div>""", unsafe_allow_html=True)
+    st.html(f"""
+    <div style="text-align:center;padding:1.5rem;user-select:none;">
+      <p style="color:{GD};-webkit-text-fill-color:{GD};font-family:'Playfair Display',serif;
+                font-weight:700;font-size:1.1rem;margin:0;">
+        🏔️ The Mountain Path — World of Finance
+      </p>
+      <p style="color:{TP};-webkit-text-fill-color:{TP};font-size:0.88rem;margin:0.3rem 0 0;">
+        Prof. V. Ravichandran  ·  28+ Years Corporate Finance &amp; Banking  ·  10+ Years Academic Excellence
+      </p>
+      <p style="color:{TS};-webkit-text-fill-color:{TS};font-size:0.78rem;margin:0.2rem 0 0;">
+        Visiting Faculty: NMIMS Bangalore  ·  BITS Pilani  ·  RV University Bangalore  ·  Goa Institute of Management
+      </p>
+      <div style="margin-top:1rem;padding-top:1rem;
+                  border-top:1px solid rgba(255,215,0,0.3);">
+        <a href="https://www.linkedin.com/in/trichyravis" target="_blank"
+           style="color:{GD};-webkit-text-fill-color:{GD};text-decoration:none;
+                  margin:0 1rem;font-size:0.85rem;font-weight:600;">
+          🔗 LinkedIn
+        </a>
+        <a href="https://github.com/trichyravis" target="_blank"
+           style="color:{GD};-webkit-text-fill-color:{GD};text-decoration:none;
+                  margin:0 1rem;font-size:0.85rem;font-weight:600;">
+          💻 GitHub
+        </a>
+      </div>
+    </div>""")
 
 def df_style(df):
     return df.style\
@@ -134,13 +163,21 @@ def df_style(df):
 # SIDEBAR
 # ══════════════════════════════════════════════════════════════════════════════
 with st.sidebar:
-    st.markdown(f"""
+    st.html(f"""
     <div style="text-align:center;padding:0.8rem 0 1rem;
-                border-bottom:1px solid rgba(255,215,0,0.3);margin-bottom:1rem;">
+                border-bottom:1px solid rgba(255,215,0,0.3);
+                margin-bottom:1rem;user-select:none;">
       <span style="font-family:'Playfair Display',serif;font-size:1.05rem;
-                   color:{GD};font-weight:700;">📊 Valuation Model</span><br>
-      <span style="color:{TS};font-size:0.75rem;">NMIMS Bangalore · Corp Finance</span>
-    </div>""", unsafe_allow_html=True)
+                   color:{GD};-webkit-text-fill-color:{GD};font-weight:700;">
+        🏔️ The Mountain Path
+      </span><br>
+      <span style="color:{LB};-webkit-text-fill-color:{LB};font-size:0.82rem;font-weight:600;">
+        Prof. V. Ravichandran
+      </span><br>
+      <span style="color:{TS};-webkit-text-fill-color:{TS};font-size:0.72rem;">
+        FCFF &amp; APV Valuation Model
+      </span>
+    </div>""")
 
     # ── Company ──────────────────────────────────────────────────────────────
     st.markdown(f'<div style="color:{GD};font-weight:700;font-size:0.9rem;margin-bottom:6px;">🏢 Company</div>',
@@ -804,14 +841,29 @@ elif active == "💥 MM with Tax":
         line=dict(color=RD, width=1.8, dash="dot"),
         marker=dict(size=7, color=RD)), row=1, col=2)
 
-    # Mark optimal
-    fig_mm.add_vline(x=plan_names[best_idx], line_dash="dash", line_color=GD,
-                     annotation_text=f"  Optimal: Plan {plan_names[best_idx]}",
-                     annotation_font_color=GD, row=1, col=2)
+    # Mark optimal plan — scatter trace (add_vline fails on categorical x-axis)
+    fig_mm.add_trace(go.Scatter(
+        x=[f"Plan {plan_names[best_idx]}", f"Plan {plan_names[best_idx]}"],
+        y=[0, max(vl_mm_list) * 1.06],
+        mode="lines+text",
+        line=dict(color=GD, width=2, dash="dash"),
+        text=["", "  ★ Optimal"],
+        textposition="top right",
+        textfont=dict(color=GD, size=11),
+        showlegend=False,
+    ), row=1, col=2)
 
-    fig_mm.add_hline(y=vu_mm, line_dash="dot", line_color=LB,
-                     annotation_text=f"  V_U = {vu_mm:,.0f}",
-                     annotation_font_color=LB, row=1, col=2)
+    # V_U reference line — horizontal scatter across all plan labels
+    fig_mm.add_trace(go.Scatter(
+        x=plan_lbls,
+        y=[vu_mm] * n_debt_plans,
+        mode="lines+text",
+        line=dict(color=LB, width=1.5, dash="dot"),
+        text=[""] * (n_debt_plans - 1) + [f"  V_U={vu_mm:,.0f}"],
+        textposition="middle right",
+        textfont=dict(color=LB, size=10),
+        showlegend=False,
+    ), row=1, col=2)
 
     fig_mm.update_layout(
         paper_bgcolor=CB, plot_bgcolor=CB,
@@ -1061,15 +1113,19 @@ elif active == "📖 Methodology":
         </table>""")
 
     st.markdown("---")
-    st.markdown(f"""
+    st.html(f"""
     <div style="background:linear-gradient(135deg,{DB},{MB});border:2px solid {GD};
-                border-radius:8px;padding:1rem 1.5rem;text-align:center;">
-      <p style="color:{GD};font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;margin:0;">
-        📊 FCFF &amp; APV Valuation Model  ·  NMIMS Bangalore
+                border-radius:8px;padding:1rem 1.5rem;text-align:center;user-select:none;">
+      <p style="color:{GD};-webkit-text-fill-color:{GD};font-family:'Playfair Display',serif;
+                font-weight:700;font-size:1rem;margin:0;">
+        🏔️ The Mountain Path — World of Finance
       </p>
-      <p style="color:{TS};font-size:0.8rem;margin:0.3rem 0 0;">
-        Corporate Finance  ·  Capital Structure &amp; Valuation  ·  MBA Programme
+      <p style="color:{TP};-webkit-text-fill-color:{TP};font-size:0.85rem;margin:0.3rem 0 0;">
+        Prof. V. Ravichandran  ·  28+ Years Corporate Finance &amp; Banking
       </p>
-    </div>""", unsafe_allow_html=True)
+      <p style="color:{TS};-webkit-text-fill-color:{TS};font-size:0.78rem;margin:0.2rem 0 0;">
+        NMIMS Bangalore  ·  BITS Pilani  ·  RV University Bangalore  ·  Goa Institute of Management
+      </p>
+    </div>""")
 
 footer()
