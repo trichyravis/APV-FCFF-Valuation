@@ -115,7 +115,7 @@ def header():
         Prof. V. Ravichandran  ·  28+ Years Corporate Finance &amp; Banking  ·  10+ Years Academic Excellence
       </p>
       <p style="color:{TS};-webkit-text-fill-color:{TS};margin:0.15rem 0 0;font-size:0.78rem;">
-        Visiting Faculty: NMIMS Bangalore  ·  BITS Pilani  ·  RV University Bangalore  ·  Goa Institute of Management
+        Professor of Practice &amp; Visiting Faculty at Various Business Schools India
       </p>
     </div>""")
 
@@ -131,7 +131,7 @@ def footer():
         Prof. V. Ravichandran  ·  28+ Years Corporate Finance &amp; Banking  ·  10+ Years Academic Excellence
       </p>
       <p style="color:{TS};-webkit-text-fill-color:{TS};font-size:0.78rem;margin:0.2rem 0 0;">
-        Visiting Faculty: NMIMS Bangalore  ·  BITS Pilani  ·  RV University Bangalore  ·  Goa Institute of Management
+        Professor of Practice &amp; Visiting Faculty at Various Business Schools India
       </p>
       <div style="margin-top:1rem;padding-top:1rem;
                   border-top:1px solid rgba(255,215,0,0.3);">
@@ -1124,7 +1124,7 @@ elif active == "📖 Methodology":
         Prof. V. Ravichandran  ·  28+ Years Corporate Finance &amp; Banking
       </p>
       <p style="color:{TS};-webkit-text-fill-color:{TS};font-size:0.78rem;margin:0.2rem 0 0;">
-        NMIMS Bangalore  ·  BITS Pilani  ·  RV University Bangalore  ·  Goa Institute of Management
+        Professor of Practice &amp; Visiting Faculty at Various Business Schools India
       </p>
     </div>""")
 
