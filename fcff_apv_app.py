@@ -1,3 +1,4 @@
+
 """
 FCFF & APV Dynamic Valuation Model
 The Mountain Path — World of Finance
@@ -290,7 +291,7 @@ header()
 if "top_nav" not in st.session_state:
     st.session_state.top_nav = "📊 FCFF Build"
 
-nav1, nav2, nav3, nav4, nav5 = st.columns(5)
+nav1, nav2, nav3, nav4, nav5, nav6 = st.columns(6)
 with nav1:
     if st.button("📊 FCFF Build",     use_container_width=True, key="n1"): st.session_state.top_nav = "📊 FCFF Build"
 with nav2:
@@ -298,9 +299,11 @@ with nav2:
 with nav3:
     if st.button("🔬 APV Valuation",  use_container_width=True, key="n3"): st.session_state.top_nav = "🔬 APV Valuation"
 with nav4:
-    if st.button("⚖️ Comparison",     use_container_width=True, key="n4"): st.session_state.top_nav = "⚖️ Comparison"
+    if st.button("💥 MM with Tax",    use_container_width=True, key="n4"): st.session_state.top_nav = "💥 MM with Tax"
 with nav5:
-    if st.button("📖 Methodology",    use_container_width=True, key="n5"): st.session_state.top_nav = "📖 Methodology"
+    if st.button("⚖️ Comparison",     use_container_width=True, key="n5"): st.session_state.top_nav = "⚖️ Comparison"
+with nav6:
+    if st.button("📖 Methodology",    use_container_width=True, key="n6"): st.session_state.top_nav = "📖 Methodology"
 
 active = st.session_state.top_nav
 st.markdown(f"""
@@ -644,8 +647,282 @@ elif active == "🔬 APV Valuation":
                     legend=dict(bgcolor="rgba(0,0,0,0)", font=dict(color=TP)))
                 st.plotly_chart(fig_ts, use_container_width=True, key="ts_bar")
 
+
 # ══════════════════════════════════════════════════════════════════════════════
-# TAB 4 — COMPARISON
+# TAB — MM WITH TAX + BANKRUPTCY COSTS (TRADE-OFF THEORY)
+# ══════════════════════════════════════════════════════════════════════════════
+elif active == "💥 MM with Tax":
+    sec("💥 MM with Corporate Tax + Bankruptcy Costs — Trade-Off Theory")
+
+    ibox(f"""
+    <b>MM Proposition I with Tax:</b> V_L = V_U + T_c × D  (tax shield adds value with each ₹ of debt)<br>
+    <b>Trade-Off Theory:</b> V_L = V_U + T_c × D − PV(Bankruptcy Costs)<br><br>
+    As debt rises: the tax shield grows linearly, but expected bankruptcy costs grow non-linearly.
+    The <b>optimal capital structure</b> is where the marginal benefit of the tax shield exactly
+    equals the marginal expected bankruptcy cost.
+    """, title="The Trade-Off Theory Framework")
+
+    st.markdown("---")
+    sec("⚙️ Bankruptcy Cost Parameters")
+
+    bc1, bc2, bc3 = st.columns(3)
+    with bc1:
+        bc_total = st.number_input(
+            f"Total Bankruptcy Cost if it occurs ({curr})",
+            value=200.0, min_value=0.0, step=10.0, key="bc_total")
+    with bc2:
+        n_debt_plans = st.slider("Number of Debt Plans", 3, 8, 5, key="ndp")
+    with bc3:
+        st.markdown(f"""
+        <div class="metric-card">
+          <div class="lbl">Unlevered Firm Value V_U</div>
+          <div class="val" style="color:{LB};-webkit-text-fill-color:{LB};">
+            {curr} {vu if method in ["APV Method","Both Methods"] and tv_apv is not None else "—"}
+          </div>
+          <div class="sub">From APV tab (set APV method)</div>
+        </div>""", unsafe_allow_html=True)
+
+    # Let user define debt levels and bankruptcy probabilities
+    st.markdown(f"""
+    <div class="section-title">📋 Debt Plans — Enter Debt Levels and Bankruptcy Probabilities</div>
+    """, unsafe_allow_html=True)
+
+    # Default debt levels and probs
+    default_debts = [0, 200, 400, 600, 800, 1000, 1200, 1500]
+    default_probs = [0.0, 1.5, 3.0, 6.0, 12.0, 20.0, 30.0, 45.0]
+
+    cols_hdr = st.columns([2, 2, 2])
+    with cols_hdr[0]:
+        st.markdown(f"<p style='color:{GD};font-weight:700;font-size:0.85rem;'>Plan</p>", unsafe_allow_html=True)
+    with cols_hdr[1]:
+        st.markdown(f"<p style='color:{GD};font-weight:700;font-size:0.85rem;'>Debt ({curr})</p>", unsafe_allow_html=True)
+    with cols_hdr[2]:
+        st.markdown(f"<p style='color:{GD};font-weight:700;font-size:0.85rem;'>P(Bankruptcy) %</p>", unsafe_allow_html=True)
+
+    plan_debts = []
+    plan_probs = []
+    plan_names = ["A","B","C","D","E","F","G","H"]
+
+    for i in range(n_debt_plans):
+        c1_, c2_, c3_ = st.columns([2, 2, 2])
+        with c1_:
+            st.markdown(f"<p style='color:{LB};font-size:0.88rem;padding:6px 0;'><b>Plan {plan_names[i]}</b></p>",
+                        unsafe_allow_html=True)
+        with c2_:
+            d = st.number_input("", value=float(default_debts[i]), min_value=0.0, step=50.0,
+                                key=f"pd_{i}", label_visibility="collapsed")
+        with c3_:
+            p = st.number_input("", value=default_probs[i], min_value=0.0, max_value=100.0,
+                                step=0.5, key=f"pp_{i}", label_visibility="collapsed")
+        plan_debts.append(d)
+        plan_probs.append(p / 100.0)
+
+    st.markdown("---")
+
+    # Use V_U from APV if available, else ask user
+    if method in ["APV Method", "Both Methods"] and tv_apv is not None:
+        vu_mm = vu
+    else:
+        vu_mm = st.number_input(
+            f"Enter Unlevered Firm Value V_U ({curr}) manually:",
+            value=2000.0, min_value=0.0, step=100.0, key="vu_mm")
+        st.info("💡 Run the APV Method in the sidebar to auto-populate V_U from your FCFF projections.")
+
+    # ── Calculations ──────────────────────────────────────────────────────────
+    ts_list    = [tax_rate * d for d in plan_debts]               # Tax shield
+    exp_bc_list = [p * bc_total for p, d in zip(plan_probs, plan_debts)]  # Expected BC
+    vl_mm_list  = [vu_mm + ts - ebc for ts, ebc in zip(ts_list, exp_bc_list)]  # V_L
+    eq_mm_list  = [vl - d for vl, d in zip(vl_mm_list, plan_debts)]
+
+    best_idx = int(np.argmax(vl_mm_list))
+
+    # ── KPI row ────────────────────────────────────────────────────────────────
+    k1, k2, k3, k4 = st.columns(4)
+    with k1: mcard("V_U (All-Equity Value)", f"{curr} {vu_mm:,.1f}", sub="Baseline")
+    with k2: mcard("Max Tax Shield", f"{curr} {max(ts_list):,.1f}",
+                   sub=f"Plan {plan_names[ts_list.index(max(ts_list))]}", color=GD)
+    with k3: mcard("Optimal Plan", f"Plan {plan_names[best_idx]}",
+                   sub=f"D = {curr} {plan_debts[best_idx]:,.0f}", color=GR)
+    with k4: mcard("Maximum V_L", f"{curr} {max(vl_mm_list):,.1f}",
+                   sub="Trade-Off Optimum", color=GR)
+
+    st.markdown("---")
+
+    # ── Summary Table ──────────────────────────────────────────────────────────
+    sec("📋 Trade-Off Theory — Full Computation Table")
+    fbox("V_L  =  V_U  +  T_c × D  −  P(Bankruptcy) × Bankruptcy Cost")
+
+    rows_mm = []
+    for i in range(n_debt_plans):
+        rows_mm.append({
+            "Plan": f"Plan {plan_names[i]}",
+            f"Debt ({curr})": f"{plan_debts[i]:,.0f}",
+            f"V_U ({curr})": f"{vu_mm:,.1f}",
+            "Tax Rate Tc": f"{tax_rate*100:.1f}%",
+            f"Tax Shield = Tc×D ({curr})": f"{ts_list[i]:,.1f}",
+            "P(Bankruptcy)": f"{plan_probs[i]*100:.1f}%",
+            f"Exp. BC = P×Total ({curr})": f"{exp_bc_list[i]:,.1f}",
+            f"V_L = VU+TS−EBC ({curr})": f"{vl_mm_list[i]:,.1f}",
+            f"Equity = VL−D ({curr})": f"{eq_mm_list[i]:,.1f}",
+            "Optimal?": "✅ OPTIMAL" if i == best_idx else "",
+        })
+
+    mm_df = pd.DataFrame(rows_mm).set_index("Plan")
+    st.dataframe(df_style(mm_df), use_container_width=True)
+
+    st.markdown("---")
+
+    # ── Charts ─────────────────────────────────────────────────────────────────
+    sec("📊 Trade-Off Theory Visualisations")
+    fig_mm = make_subplots(rows=1, cols=2,
+        subplot_titles=["Firm Value Components by Plan",
+                        "V_L, Tax Shield and Expected BC"],
+        horizontal_spacing=0.08)
+
+    plan_lbls = [f"Plan {plan_names[i]}" for i in range(n_debt_plans)]
+
+    # Left: stacked bar — V_U base + tax shield − exp BC
+    fig_mm.add_trace(go.Bar(name="V_U (Base)", x=plan_lbls,
+        y=[vu_mm]*n_debt_plans, marker_color=MB, opacity=0.8), row=1, col=1)
+    fig_mm.add_trace(go.Bar(name="Tax Shield (+)", x=plan_lbls,
+        y=ts_list, marker_color=GD, opacity=0.9), row=1, col=1)
+    fig_mm.add_trace(go.Bar(name="Expected BC (−)", x=plan_lbls,
+        y=[-e for e in exp_bc_list], marker_color=RD, opacity=0.9), row=1, col=1)
+
+    # Right: line chart — V_L vs D
+    fig_mm.add_trace(go.Scatter(x=plan_lbls, y=vl_mm_list,
+        mode="lines+markers", name="V_L (Trade-Off)",
+        line=dict(color=GR, width=2.5),
+        marker=dict(size=9, color=[GD if i == best_idx else GR for i in range(n_debt_plans)])),
+        row=1, col=2)
+    fig_mm.add_trace(go.Scatter(x=plan_lbls, y=ts_list,
+        mode="lines+markers", name="Tax Shield",
+        line=dict(color=GD, width=1.8, dash="dash"),
+        marker=dict(size=7, color=GD)), row=1, col=2)
+    fig_mm.add_trace(go.Scatter(x=plan_lbls, y=exp_bc_list,
+        mode="lines+markers", name="Expected BC",
+        line=dict(color=RD, width=1.8, dash="dot"),
+        marker=dict(size=7, color=RD)), row=1, col=2)
+
+    # Mark optimal
+    fig_mm.add_vline(x=plan_names[best_idx], line_dash="dash", line_color=GD,
+                     annotation_text=f"  Optimal: Plan {plan_names[best_idx]}",
+                     annotation_font_color=GD, row=1, col=2)
+
+    fig_mm.add_hline(y=vu_mm, line_dash="dot", line_color=LB,
+                     annotation_text=f"  V_U = {vu_mm:,.0f}",
+                     annotation_font_color=LB, row=1, col=2)
+
+    fig_mm.update_layout(
+        paper_bgcolor=CB, plot_bgcolor=CB,
+        font=dict(color=TP, family="Source Sans Pro"),
+        height=420,
+        margin=dict(l=50, r=30, t=60, b=40),
+        barmode="relative",
+        legend=dict(bgcolor="rgba(0,0,0,0)", font=dict(color=TP)),
+        title=dict(text="", font=dict(color=GD)),
+    )
+    for ax in ["xaxis","xaxis2","yaxis","yaxis2"]:
+        fig_mm.update_layout(**{ax: dict(gridcolor="rgba(255,255,255,0.05)",
+                                         tickfont=dict(color=TP))})
+    # Subplot title colours
+    for ann in fig_mm.layout.annotations:
+        ann.font.color = GD
+
+    st.plotly_chart(fig_mm, use_container_width=True, key="mm_tax_chart")
+
+    st.markdown("---")
+
+    # ── Sensitivity heatmap — V_L across debt and P(Bankruptcy) ───────────────
+    sec("🌡 Sensitivity: V_L Across Debt Levels and Bankruptcy Probabilities")
+
+    debt_range = np.linspace(0, max(plan_debts) * 1.2, 30)
+    prob_range = np.linspace(0, 0.40, 30)
+    VL_grid = np.array([[vu_mm + tax_rate * d - p * bc_total
+                          for d in debt_range] for p in prob_range])
+
+    fig_heat = go.Figure(go.Heatmap(
+        z=VL_grid,
+        x=np.round(debt_range, 0),
+        y=np.round(prob_range * 100, 1),
+        colorscale=[
+            [0.0, "#8b0000"], [0.3, RD], [0.5, GD],
+            [0.7, GR], [1.0, "#004d00"]
+        ],
+        colorbar=dict(
+            title=dict(text=f"V_L ({curr})", font=dict(color=GD)),
+            tickfont=dict(color=TP), thickness=14, outlinewidth=0
+        ),
+        hoverongaps=False,
+        hovertemplate=f"Debt: %{{x:,.0f}}<br>P(BC): %{{y:.1f}}%<br>V_L: {curr} %{{z:,.1f}}<extra></extra>",
+    ))
+
+    # Mark current optimal plan
+    fig_heat.add_trace(go.Scatter(
+        x=[plan_debts[best_idx]], y=[plan_probs[best_idx] * 100],
+        mode="markers",
+        marker=dict(size=16, color=GD, symbol="star",
+                    line=dict(width=2, color=TP)),
+        name=f"Optimal Plan {plan_names[best_idx]}",
+        showlegend=True
+    ))
+
+    fig_heat.update_layout(
+        **dict(paper_bgcolor=CB, plot_bgcolor=CB,
+               font=dict(color=TP, family="Source Sans Pro"),
+               margin=dict(l=60, r=80, t=50, b=60)),
+        title=dict(text=f"V_L Heatmap — Debt vs P(Bankruptcy) — Gold star = current optimal plan",
+                   font=dict(color=GD, size=13), x=0),
+        xaxis=dict(title=f"Debt Level ({curr})", gridcolor="rgba(255,255,255,0.05)"),
+        yaxis=dict(title="P(Bankruptcy) %", gridcolor="rgba(255,255,255,0.05)"),
+        height=420,
+        legend=dict(bgcolor="rgba(0,0,0,0)", font=dict(color=TP)),
+    )
+    st.plotly_chart(fig_heat, use_container_width=True, key="mm_heatmap")
+
+    st.markdown("---")
+
+    # ── Interpretation ─────────────────────────────────────────────────────────
+    ts_gain_opt = ts_list[best_idx]
+    bc_cost_opt = exp_bc_list[best_idx]
+    vl_gain_opt = vl_mm_list[best_idx] - vu_mm
+
+    ibox(f"""
+    <b>Optimal Plan: Plan {plan_names[best_idx]}</b> — Debt = {curr} {plan_debts[best_idx]:,.0f}<br><br>
+    <table style="width:100%;font-size:0.87rem;border-collapse:collapse;">
+    <tr style="border-bottom:1px solid rgba(255,215,0,0.3);">
+      <th style="color:{GD};padding:6px;text-align:left;">Component</th>
+      <th style="color:{GD};padding:6px;text-align:right;">Value ({curr})</th>
+      <th style="color:{GD};padding:6px;text-align:left;">Direction</th>
+    </tr>
+    <tr style="border-bottom:1px solid rgba(255,255,255,0.07);">
+      <td style="padding:5px;">V_U (All-equity base)</td>
+      <td style="padding:5px;text-align:right;">{vu_mm:,.1f}</td>
+      <td style="padding:5px;">Baseline</td>
+    </tr>
+    <tr style="border-bottom:1px solid rgba(255,255,255,0.07);">
+      <td style="padding:5px;color:{GD};">+ Tax Shield (Tc × D)</td>
+      <td style="padding:5px;text-align:right;color:{GD};">+{ts_gain_opt:,.1f}</td>
+      <td style="padding:5px;color:{GD};">Value creation ↑</td>
+    </tr>
+    <tr style="border-bottom:1px solid rgba(255,255,255,0.07);">
+      <td style="padding:5px;color:{RD};">− Expected Bankruptcy Cost</td>
+      <td style="padding:5px;text-align:right;color:{RD};">−{bc_cost_opt:,.1f}</td>
+      <td style="padding:5px;color:{RD};">Value erosion ↓</td>
+    </tr>
+    <tr>
+      <td style="padding:5px;font-weight:700;">= V_L (Optimal)</td>
+      <td style="padding:5px;text-align:right;font-weight:700;color:{GR};">{vl_mm_list[best_idx]:,.1f}</td>
+      <td style="padding:5px;color:{GR};">Net gain: +{vl_gain_opt:,.1f}</td>
+    </tr>
+    </table><br>
+    <b>Trade-Off Theory conclusion:</b> The optimal debt level balances the marginal tax shield gain
+    against the marginal rise in expected bankruptcy costs. Beyond Plan {plan_names[best_idx]},
+    bankruptcy risk accelerates faster than the tax shield grows, destroying firm value.
+    """, title=f"📌 Optimal Capital Structure — Plan {plan_names[best_idx]}")
+
+# ══════════════════════════════════════════════════════════════════════════════
+# TAB 5 — COMPARISON
 # ══════════════════════════════════════════════════════════════════════════════
 elif active == "⚖️ Comparison":
     sec("⚖️ WACC vs APV — Side-by-Side Comparison")
