@@ -433,6 +433,248 @@ if active == "📊 FCFF Build":
             legend=dict(bgcolor="rgba(0,0,0,0)", font=dict(color=TP)))
         st.plotly_chart(fig_rev, use_container_width=True, key="rev_trend")
 
+    st.markdown("---")
+
+    # ── Terminal Value Section ────────────────────────────────────────────────
+    sec("🔭 Terminal Value Analysis")
+
+    fbox("TV (WACC)  =  FCFF₅ × (1+g) / (WACC − g)     [Gordon Growth, discounted at WACC]")
+    fbox("TV (APV)   =  FCFF₅ × (1+g) / (r₀  − g)      [Gordon Growth, discounted at r₀  ]")
+
+    # Compute TVs for a range of growth rates to show sensitivity
+    g_range    = np.linspace(max(0.005, g - 0.03), g + 0.04, 40)
+    base_fcff5 = fcff[-1]
+
+    # WACC TV (only if WACC method active)
+    if method in ["WACC Method", "Both Methods"] and tv_wacc is not None:
+        tv_wacc_range  = [base_fcff5 * (1 + gi) / (wacc - gi) if wacc > gi else None
+                          for gi in g_range]
+        tv_wacc_pv_range = [tv / (1 + wacc) ** n_years if tv else None
+                            for tv in tv_wacc_range]
+    else:
+        tv_wacc_range = tv_wacc_pv_range = None
+
+    # APV TV (only if APV method active)
+    if method in ["APV Method", "Both Methods"] and tv_apv is not None:
+        tv_apv_range   = [base_fcff5 * (1 + gi) / (r0 - gi) if r0 > gi else None
+                          for gi in g_range]
+        tv_apv_pv_range = [tv / (1 + r0) ** n_years if tv else None
+                           for tv in tv_apv_range]
+    else:
+        tv_apv_range = tv_apv_pv_range = None
+
+    # ── Row 1: TV KPIs ────────────────────────────────────────────────────────
+    kc = []
+    if method in ["WACC Method", "Both Methods"] and tv_wacc is not None:
+        kc += [
+            ("TV (WACC Method)", f"{curr} {tv_wacc:,.1f}",
+             f"FCFF₅×(1+g)/(WACC−g)  |  g={g*100:.1f}%"),
+            ("PV of TV (WACC)", f"{curr} {pv_tv_wacc:,.1f}",
+             f"TV / (1+WACC)^{n_years}  =  {pv_tv_wacc/ev_wacc_val*100:.1f}% of EV"),
+        ]
+    if method in ["APV Method", "Both Methods"] and tv_apv is not None:
+        kc += [
+            ("TV (APV / r₀ Method)", f"{curr} {tv_apv:,.1f}",
+             f"FCFF₅×(1+g)/(r₀−g)  |  g={g*100:.1f}%"),
+            ("PV of TV (APV)", f"{curr} {pv_tv_apv:,.1f}",
+             f"TV / (1+r₀)^{n_years}  =  {pv_tv_apv/vu*100:.1f}% of V_U"),
+        ]
+    if kc:
+        cols_tv = st.columns(len(kc))
+        for col, (lbl, val, sub) in zip(cols_tv, kc):
+            with col: mcard(lbl, val, sub=sub, color=GD)
+        st.markdown("")
+
+    # ── Row 2: Three charts ───────────────────────────────────────────────────
+    chart_cols = st.columns(3)
+
+    # Chart 1: FCFF bar + TV bar side by side (explicit vs terminal)
+    with chart_cols[0]:
+        labels_full = years + [f"TV (FY{n_years}+)"]
+        if method in ["WACC Method", "Both Methods"] and tv_wacc is not None:
+            vals_full  = fcff + [tv_wacc]
+            pv_full    = [pv_fcff_wacc[i] for i in range(n_years)] + [pv_tv_wacc]
+            disc_label = "WACC"
+        elif method in ["APV Method", "Both Methods"] and tv_apv is not None:
+            vals_full  = fcff + [tv_apv]
+            pv_full    = [pv_fcff_apv[i] for i in range(n_years)] + [pv_tv_apv]
+            disc_label = "r₀"
+        else:
+            vals_full = pv_full = None
+
+        if vals_full:
+            bar_colors = [MB] * n_years + [GD]
+            pv_colors  = [LB] * n_years + [GR]
+            fig_tv1 = go.Figure()
+            fig_tv1.add_trace(go.Bar(
+                name="Nominal FCFF / TV", x=labels_full, y=vals_full,
+                marker_color=bar_colors, opacity=0.75, width=0.35,
+                offsetgroup=0,
+                text=[f"{v:,.0f}" for v in vals_full],
+                textposition="outside",
+                textfont=dict(family="JetBrains Mono", size=8, color=TP)))
+            fig_tv1.add_trace(go.Bar(
+                name=f"PV at {disc_label}", x=labels_full, y=pv_full,
+                marker_color=pv_colors, opacity=0.9, width=0.35,
+                offsetgroup=1,
+                text=[f"{v:,.0f}" for v in pv_full],
+                textposition="outside",
+                textfont=dict(family="JetBrains Mono", size=8, color=TP)))
+            fig_tv1.update_layout(
+                **playout(height=360),
+                title=dict(text="Nominal vs PV: FCFFs & Terminal Value",
+                           font=dict(color=GD, size=12), x=0),
+                xaxis=dict(gridcolor="rgba(255,255,255,0.05)"),
+                yaxis=dict(title=curr, gridcolor="rgba(255,255,255,0.05)"),
+                barmode="group",
+                legend=dict(bgcolor="rgba(0,0,0,0)", font=dict(color=TP, size=9)))
+            st.plotly_chart(fig_tv1, use_container_width=True, key="tv_nominal_pv")
+
+    # Chart 2: TV sensitivity to g — nominal and PV lines
+    with chart_cols[1]:
+        fig_tv2 = go.Figure()
+        g_pct = [gi * 100 for gi in g_range]
+
+        if tv_wacc_range:
+            clean_tv_w  = [v if v and v > 0 else None for v in tv_wacc_range]
+            clean_pv_w  = [v if v and v > 0 else None for v in tv_wacc_pv_range]
+            fig_tv2.add_trace(go.Scatter(
+                x=g_pct, y=clean_tv_w, mode="lines", name="TV Nominal (WACC)",
+                line=dict(color=GD, width=2)))
+            fig_tv2.add_trace(go.Scatter(
+                x=g_pct, y=clean_pv_w, mode="lines", name="PV of TV (WACC)",
+                line=dict(color=GD, width=2, dash="dash")))
+
+        if tv_apv_range:
+            clean_tv_a  = [v if v and v > 0 else None for v in tv_apv_range]
+            clean_pv_a  = [v if v and v > 0 else None for v in tv_apv_pv_range]
+            fig_tv2.add_trace(go.Scatter(
+                x=g_pct, y=clean_tv_a, mode="lines", name="TV Nominal (r₀/APV)",
+                line=dict(color=LB, width=2)))
+            fig_tv2.add_trace(go.Scatter(
+                x=g_pct, y=clean_pv_a, mode="lines", name="PV of TV (r₀/APV)",
+                line=dict(color=LB, width=2, dash="dash")))
+
+        # Mark current g
+        fig_tv2.add_trace(go.Scatter(
+            x=[g * 100], y=[base_fcff5 * (1 + g) / (
+                (wacc if method in ["WACC Method","Both Methods"] and tv_wacc else r0) - g)],
+            mode="markers", name=f"Current g={g*100:.1f}%",
+            marker=dict(size=12, color=GD, symbol="diamond",
+                        line=dict(width=2, color=TP)),
+            showlegend=True))
+
+        fig_tv2.update_layout(
+            **playout(height=360),
+            title=dict(text="TV Sensitivity to Growth Rate g",
+                       font=dict(color=GD, size=12), x=0),
+            xaxis=dict(title="Terminal Growth Rate g (%)",
+                       gridcolor="rgba(255,255,255,0.05)"),
+            yaxis=dict(title=f"Value ({curr})",
+                       gridcolor="rgba(255,255,255,0.05)"),
+            legend=dict(bgcolor="rgba(0,0,0,0)", font=dict(color=TP, size=9)))
+        st.plotly_chart(fig_tv2, use_container_width=True, key="tv_sensitivity")
+
+    # Chart 3: Value attribution donut (Explicit FCFFs vs Terminal Value PV)
+    with chart_cols[2]:
+        if method in ["WACC Method", "Both Methods"] and tv_wacc is not None:
+            ex_pv_   = sum(pv_fcff_wacc)
+            tv_pv_   = pv_tv_wacc
+            ev_      = ev_wacc_val
+            lbl_     = "WACC"
+        elif method in ["APV Method", "Both Methods"] and tv_apv is not None:
+            ex_pv_   = sum(pv_fcff_apv)
+            tv_pv_   = pv_tv_apv
+            ev_      = vu
+            lbl_     = "r₀ / APV"
+        else:
+            ex_pv_ = tv_pv_ = ev_ = lbl_ = None
+
+        if ex_pv_ is not None:
+            tv_share  = tv_pv_ / ev_ * 100
+            ex_share  = ex_pv_ / ev_ * 100
+            fig_tv3 = go.Figure(go.Pie(
+                labels=[f"Explicit FCFFs<br>(FY1–FY{n_years})",
+                        f"Terminal Value PV<br>(FY{n_years}+ in perpetuity)"],
+                values=[ex_pv_, tv_pv_],
+                hole=0.50,
+                marker=dict(colors=[MB, GD], line=dict(color=CB, width=3)),
+                textfont=dict(size=11),
+                textinfo="label+percent",
+                hovertemplate="<b>%{label}</b><br>%{value:,.1f}<br>%{percent}<extra></extra>",
+                pull=[0, 0.06],   # pull out TV slice for emphasis
+            ))
+            fig_tv3.add_annotation(
+                text=f"TV = {tv_share:.0f}%<br>of Total",
+                x=0.5, y=0.5, showarrow=False,
+                font=dict(size=13, color=GD, family="Playfair Display"),
+            )
+            fig_tv3.update_layout(
+                **playout(height=360, margin=dict(l=10, r=10, t=50, b=10)),
+                title=dict(text=f"Value Attribution ({lbl_} Method)",
+                           font=dict(color=GD, size=12), x=0),
+                legend=dict(bgcolor="rgba(0,0,0,0)", font=dict(color=TP, size=10),
+                            orientation="h", y=-0.12))
+            st.plotly_chart(fig_tv3, use_container_width=True, key="tv_donut")
+
+    # ── TV % share insight ────────────────────────────────────────────────────
+    if method in ["WACC Method", "Both Methods"] and tv_wacc is not None:
+        tv_pct = pv_tv_wacc / ev_wacc_val * 100
+        r_used, tv_used, ev_used = wacc, tv_wacc, ev_wacc_val
+        method_lbl = "WACC"
+    elif method in ["APV Method", "Both Methods"] and tv_apv is not None:
+        tv_pct = pv_tv_apv / vu * 100
+        r_used, tv_used, ev_used = r0, tv_apv, vu
+        method_lbl = "r₀ / APV"
+    else:
+        tv_pct = None
+
+    if tv_pct:
+        color_tv = GD if tv_pct < 70 else RD
+        st.html(f"""
+        <div class="info-box">
+          <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;
+                     font-family:'Playfair Display',serif;">
+            📌 Terminal Value Interpretation
+          </h4>
+          <table style="width:100%;font-size:0.87rem;border-collapse:collapse;">
+            <tr style="border-bottom:1px solid rgba(255,215,0,0.25);">
+              <td style="padding:6px;color:{LB};-webkit-text-fill-color:{LB};font-weight:600;">FCFF₅ (terminal base)</td>
+              <td style="padding:6px;color:{TP};-webkit-text-fill-color:{TP};">{curr} {base_fcff5:,.1f}</td>
+              <td style="padding:6px;color:{TS};-webkit-text-fill-color:{TS};">Last projected year cash flow</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(255,215,0,0.25);">
+              <td style="padding:6px;color:{LB};-webkit-text-fill-color:{LB};font-weight:600;">Terminal Growth Rate g</td>
+              <td style="padding:6px;color:{TP};-webkit-text-fill-color:{TP};">{g*100:.2f}%</td>
+              <td style="padding:6px;color:{TS};-webkit-text-fill-color:{TS};">Perpetual growth from FY{n_years}+</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(255,215,0,0.25);">
+              <td style="padding:6px;color:{LB};-webkit-text-fill-color:{LB};font-weight:600;">Discount Rate ({method_lbl})</td>
+              <td style="padding:6px;color:{TP};-webkit-text-fill-color:{TP};">{r_used*100:.2f}%</td>
+              <td style="padding:6px;color:{TS};-webkit-text-fill-color:{TS};">Spread over g = {(r_used-g)*100:.2f}%</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(255,215,0,0.25);">
+              <td style="padding:6px;color:{LB};-webkit-text-fill-color:{LB};font-weight:600;">Terminal Value (Nominal)</td>
+              <td style="padding:6px;color:{TP};-webkit-text-fill-color:{TP};">{curr} {tv_used:,.1f}</td>
+              <td style="padding:6px;color:{TS};-webkit-text-fill-color:{TS};">At end of FY{n_years} (Gordon Growth)</td>
+            </tr>
+            <tr>
+              <td style="padding:6px;color:{LB};-webkit-text-fill-color:{LB};font-weight:600;font-size:0.95rem;">
+                TV as % of Total Value
+              </td>
+              <td style="padding:6px;color:{color_tv};-webkit-text-fill-color:{color_tv};
+                         font-weight:700;font-size:1rem;">
+                {tv_pct:.1f}%
+              </td>
+              <td style="padding:6px;color:{TS};-webkit-text-fill-color:{TS};">
+                {"⚠ High TV dependency — growth assumptions are critical" if tv_pct > 70
+                 else "✅ Moderate — explicit FCFFs carry meaningful weight"}
+              </td>
+            </tr>
+          </table>
+        </div>
+        """)
+
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 2 — WACC VALUATION
 # ══════════════════════════════════════════════════════════════════════════════
