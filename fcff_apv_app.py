@@ -328,7 +328,7 @@ header()
 if "top_nav" not in st.session_state:
     st.session_state.top_nav = "📊 FCFF Build"
 
-nav1, nav2, nav3, nav4, nav5, nav6 = st.columns(6)
+nav1, nav2, nav3, nav4, nav5, nav6, nav7 = st.columns(7)
 with nav1:
     if st.button("📊 FCFF Build",     use_container_width=True, key="n1"): st.session_state.top_nav = "📊 FCFF Build"
 with nav2:
@@ -341,6 +341,8 @@ with nav5:
     if st.button("⚖️ Comparison",     use_container_width=True, key="n5"): st.session_state.top_nav = "⚖️ Comparison"
 with nav6:
     if st.button("📖 Methodology",    use_container_width=True, key="n6"): st.session_state.top_nav = "📖 Methodology"
+with nav7:
+    if st.button("🎓 Education",      use_container_width=True, key="n7"): st.session_state.top_nav = "🎓 Education"
 
 active = st.session_state.top_nav
 st.markdown(f"""
@@ -1369,5 +1371,752 @@ elif active == "📖 Methodology":
         Professor of Practice &amp; Visiting Faculty at Various Business Schools India
       </p>
     </div>""")
+
+# ══════════════════════════════════════════════════════════════════════════════
+# TAB — EDUCATION
+# ══════════════════════════════════════════════════════════════════════════════
+elif active == "🎓 Education":
+    sec("🎓 Comprehensive Notes — Capital Structure, Valuation & Bankruptcy")
+
+    st.html(f"""
+    <div class="info-box" style="margin-bottom:1rem;">
+      <p style="margin:0;font-size:0.9rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+        This tab covers the complete theoretical and practical framework for
+        <b style="color:{GD};-webkit-text-fill-color:{GD};">Capital Structure, Firm Valuation, Debt,
+        Bankruptcy Costs, and the MM Theorems</b> — the foundations behind every calculation
+        in this model. Select a topic below.
+      </p>
+    </div>
+    """)
+
+    edu_tabs = st.tabs([
+        "1️⃣ Capital Structure Theories",
+        "2️⃣ Cost of Capital",
+        "3️⃣ FCFF & DCF Valuation",
+        "4️⃣ WACC Method",
+        "5️⃣ APV Method",
+        "6️⃣ Debt & Tax Shield",
+        "7️⃣ Bankruptcy & Distress",
+        "8️⃣ Trade-Off Theory",
+        "9️⃣ Quick Reference",
+    ])
+
+    # ── EDU TAB 1: Capital Structure Theories ────────────────────────────────
+    with edu_tabs[0]:
+        sec("Capital Structure — The Grand Progression of Theory")
+
+        c1, c2 = st.columns(2)
+        with c1:
+            st.html(f"""
+            <div class="info-box">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">NI Theory (Durand 1952)</h4>
+              <p style="font-size:0.85rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              <b>Assumption:</b> Both k_e and k_d remain constant as leverage rises.<br>
+              <b>Result:</b> More cheap debt → WACC falls → firm value rises continuously.<br>
+              <b>Optimal:</b> 100% debt.<br>
+              <b>Formula:</b> E = NI / k_e (capitalise net income at constant k_e).<br>
+              <b>Flaw:</b> Equity investors irrationally accept the same return
+              regardless of how risky their position becomes.
+              </p>
+            </div>
+            <div class="info-box" style="margin-top:10px;">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">NOI Theory (Durand 1952)</h4>
+              <p style="font-size:0.85rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              <b>Assumption:</b> Overall capitalisation rate k_o is fixed. Market
+              values the entire firm by capitalising NOI (not NI) at k_o.<br>
+              <b>Result:</b> As D rises, k_e rises proportionally — exactly offsetting
+              cheap debt. WACC and firm value are constant.<br>
+              <b>Formula:</b> V = NOI / k_o (constant). k_e = NI / (V − D) is derived.<br>
+              <b>Implication:</b> Capital structure is irrelevant —
+              same conclusion as MM (No Tax).
+              </p>
+            </div>
+            """)
+            st.html(f"""
+            <div class="info-box" style="margin-top:10px;">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">Miller (1977) — Personal Taxes</h4>
+              <p style="font-size:0.85rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              Merton Miller extended MM with tax by adding <b>personal taxes</b>.
+              Investors pay higher personal tax on interest income than on equity
+              income (capital gains + dividends). The corporate tax shield advantage
+              of debt is partially or fully offset by the personal tax disadvantage.
+              In equilibrium, the net tax benefit of debt may be zero or small.
+              </p>
+            </div>
+            """)
+
+        with c2:
+            st.html(f"""
+            <div class="info-box">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">MM No Tax (1958)</h4>
+              <p style="font-size:0.85rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              <b>Proposition I:</b> V_L = V_U. In a world with no taxes,
+              no transaction costs, and perfect capital markets, firm value
+              is independent of capital structure.<br>
+              <b>Proposition II:</b> k_e = k_o + (k_o − k_d) × D/E.
+              As leverage rises, k_e rises linearly. WACC stays constant.<br>
+              <b>Key insight:</b> Debt splits the cash flow pie between debt and equity
+              holders — it does not enlarge the pie.
+              </p>
+            </div>
+            <div class="info-box" style="margin-top:10px;">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">MM With Tax (1963)</h4>
+              <p style="font-size:0.85rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              <b>Proposition I:</b> V_L = V_U + T_c × D.
+              Interest is tax-deductible. Each rupee of permanent debt adds T_c
+              rupees to firm value via the interest tax shield.<br>
+              <b>Proposition II:</b> k_e = k_o + (k_o − k_d)(1 − T_c) × D/E.
+              The (1−T_c) term moderates the rise in k_e.<br>
+              <b>Implication:</b> Optimal capital structure = 100% debt
+              (a conclusion limited by its own absence of bankruptcy costs).
+              </p>
+            </div>
+            <div class="info-box" style="margin-top:10px;">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">Theory Progression Summary</h4>
+              <table style="width:100%;font-size:0.8rem;border-collapse:collapse;">
+                <tr style="border-bottom:1px solid rgba(255,215,0,0.3);">
+                  <th style="color:{GD};padding:5px;text-align:left;">Theory</th>
+                  <th style="color:{GD};padding:5px;">WACC</th>
+                  <th style="color:{GD};padding:5px;">Optimal D</th>
+                </tr>
+                <tr style="border-bottom:1px solid rgba(255,255,255,0.07);">
+                  <td style="padding:4px;color:{LB};">NI Theory</td>
+                  <td style="padding:4px;text-align:center;">Falls ↓</td>
+                  <td style="padding:4px;text-align:center;">100% Debt</td>
+                </tr>
+                <tr style="border-bottom:1px solid rgba(255,255,255,0.07);">
+                  <td style="padding:4px;color:{LB};">NOI / MM No Tax</td>
+                  <td style="padding:4px;text-align:center;">Constant →</td>
+                  <td style="padding:4px;text-align:center;">Indeterminate</td>
+                </tr>
+                <tr style="border-bottom:1px solid rgba(255,255,255,0.07);">
+                  <td style="padding:4px;color:{LB};">MM With Tax</td>
+                  <td style="padding:4px;text-align:center;">Falls slightly ↓</td>
+                  <td style="padding:4px;text-align:center;">100% Debt</td>
+                </tr>
+                <tr>
+                  <td style="padding:4px;color:{LB};">Trade-Off</td>
+                  <td style="padding:4px;text-align:center;">U-shaped ∪</td>
+                  <td style="padding:4px;text-align:center;">Interior optimum</td>
+                </tr>
+              </table>
+            </div>
+            """)
+
+    # ── EDU TAB 2: Cost of Capital ────────────────────────────────────────────
+    with edu_tabs[1]:
+        sec("Cost of Capital — CAPM, Hamada, WACC")
+
+        c1, c2 = st.columns(2)
+        with c1:
+            st.html(f"""
+            <div class="info-box">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">CAPM — Capital Asset Pricing Model</h4>
+              <p style="font-size:0.85rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              CAPM prices the required return on any asset as compensation
+              for systematic (non-diversifiable) risk:
+              </p>
+              <div class="formula-box">k_e  =  Rf  +  β_L  ×  (Rm − Rf)  =  Rf  +  β_L  ×  ERP</div>
+              <p style="font-size:0.82rem;line-height:1.8;color:{TP};-webkit-text-fill-color:{TP};">
+              <b>Rf:</b> Risk-free rate — return on a zero-beta asset (Government Security
+              with maturity matching the investment horizon).<br>
+              <b>ERP:</b> Equity Risk Premium — excess return of the market portfolio
+              over Rf. Typically 5–8% for India.<br>
+              <b>β_L:</b> Levered equity beta — captures both business risk and
+              financial risk (leverage amplification).
+              </p>
+            </div>
+            <div class="info-box" style="margin-top:10px;">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">Hamada Equation — Lever &amp; Unlever Beta</h4>
+              <div class="formula-box">β_L  =  β_U  ×  [1 + (1 − T_c) × D/E]</div>
+              <div class="formula-box">β_U  =  β_L  /  [1 + (1 − T_c) × D/E]</div>
+              <p style="font-size:0.82rem;line-height:1.8;color:{TP};-webkit-text-fill-color:{TP};">
+              <b>β_U (Asset beta):</b> Systematic risk of the firm's assets alone —
+              business risk only, no financial risk.<br>
+              <b>β_L (Equity beta):</b> β_U amplified by leverage. Rises with D/E.
+              The (1−T_c) term reflects the tax shield moderating financial risk.<br>
+              <b>Use:</b> Unlever β from comparable firms → relever at target D/E
+              to estimate k_e for DCF.
+              </p>
+            </div>
+            """)
+
+        with c2:
+            st.html(f"""
+            <div class="info-box">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">WACC — Weighted Average Cost of Capital</h4>
+              <div class="formula-box">WACC = (E/V) × k_e + (D/V) × k_d × (1 − T_c)</div>
+              <p style="font-size:0.82rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              <b>E/V and D/V:</b> Market value weights — always use market values,
+              not book values.<br>
+              <b>k_d × (1−T_c):</b> After-tax cost of debt — interest is tax-deductible,
+              so the effective cost to the firm is reduced by the tax rate.<br>
+              <b>Tax shield embedded:</b> The (1−T_c) in WACC implicitly captures
+              the tax shield benefit. No need to separately add tax shields
+              when discounting at WACC.<br>
+              <b>Circular dependency:</b> WACC uses market value of equity, which
+              depends on the enterprise value, which uses WACC. Solve iteratively.
+              </p>
+            </div>
+            <div class="info-box" style="margin-top:10px;">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">Unlevered Cost of Capital r₀</h4>
+              <div class="formula-box">r₀  =  Rf  +  β_U  ×  ERP</div>
+              <p style="font-size:0.82rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              r₀ is the discount rate for an all-equity firm — it reflects business
+              risk only. Used in the APV method to discount FCFFs before
+              adding the tax shield separately.<br>
+              <b>r₀ vs WACC:</b> r₀ is always ≥ WACC (for a levered firm) because
+              WACC is reduced by the tax shield embedded in k_d(1−T_c).
+              </p>
+            </div>
+            """)
+
+    # ── EDU TAB 3: FCFF & DCF ─────────────────────────────────────────────────
+    with edu_tabs[2]:
+        sec("FCFF — Free Cash Flow to Firm & DCF Valuation")
+
+        c1, c2 = st.columns(2)
+        with c1:
+            st.html(f"""
+            <div class="info-box">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">What is FCFF?</h4>
+              <p style="font-size:0.85rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              FCFF (Free Cash Flow to Firm) is the cash generated by the firm's
+              operations available to <b>all capital providers</b> — debt holders
+              and equity holders — after meeting reinvestment needs.
+              It is <b>capital-structure neutral</b>: tax is applied to EBIT
+              (not EBT), so interest expense is excluded.
+              </p>
+              <div class="formula-box">FCFF  =  EBIT × (1 − T_c)  +  Dep  −  CapEx  −  ΔNWC</div>
+              <div class="formula-box">FCFF  =  NOPAT  +  Dep  −  CapEx  −  ΔNWC</div>
+              <p style="font-size:0.82rem;line-height:1.8;color:{TP};-webkit-text-fill-color:{TP};">
+              <b>NOPAT:</b> Net Operating Profit After Tax = EBIT × (1−T_c). The
+              after-tax operating return assuming no debt.<br>
+              <b>+Dep:</b> Add back depreciation — it was deducted to compute EBIT
+              but is non-cash.<br>
+              <b>−CapEx:</b> Capital expenditure required to sustain and grow operations.<br>
+              <b>−ΔNWC:</b> Increase in net working capital ties up cash in operations.
+              </p>
+            </div>
+            <div class="info-box" style="margin-top:10px;">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">FCFF vs FCFE</h4>
+              <table style="width:100%;font-size:0.82rem;border-collapse:collapse;">
+                <tr style="border-bottom:1px solid rgba(255,215,0,0.3);">
+                  <th style="color:{GD};padding:5px;text-align:left;">Feature</th>
+                  <th style="color:{GD};padding:5px;">FCFF</th>
+                  <th style="color:{GD};padding:5px;">FCFE</th>
+                </tr>
+                <tr style="border-bottom:1px solid rgba(255,255,255,0.07);">
+                  <td style="padding:4px;color:{LB};">Available to</td>
+                  <td style="padding:4px;text-align:center;">All investors</td>
+                  <td style="padding:4px;text-align:center;">Equity only</td>
+                </tr>
+                <tr style="border-bottom:1px solid rgba(255,255,255,0.07);">
+                  <td style="padding:4px;color:{LB};">Starting point</td>
+                  <td style="padding:4px;text-align:center;">EBIT (pre-interest)</td>
+                  <td style="padding:4px;text-align:center;">PAT (post-interest)</td>
+                </tr>
+                <tr style="border-bottom:1px solid rgba(255,255,255,0.07);">
+                  <td style="padding:4px;color:{LB};">Discount rate</td>
+                  <td style="padding:4px;text-align:center;">WACC or r₀</td>
+                  <td style="padding:4px;text-align:center;">k_e only</td>
+                </tr>
+                <tr>
+                  <td style="padding:4px;color:{LB};">Output</td>
+                  <td style="padding:4px;text-align:center;">Enterprise Value</td>
+                  <td style="padding:4px;text-align:center;">Equity Value</td>
+                </tr>
+              </table>
+            </div>
+            """)
+
+        with c2:
+            st.html(f"""
+            <div class="info-box">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">Terminal Value — Gordon Growth Model</h4>
+              <p style="font-size:0.85rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              Firms are assumed to be going concerns — they operate forever.
+              After the explicit forecast horizon (typically 5–10 years),
+              a Terminal Value (TV) captures all future cash flows:
+              </p>
+              <div class="formula-box">TV_N  =  FCFF_(N+1)  /  (r  −  g)  =  FCFF_N × (1+g)  /  (r  −  g)</div>
+              <p style="font-size:0.82rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              <b>g:</b> Sustainable perpetual growth rate. Must be less than r.
+              Rule of thumb: g ≤ nominal GDP growth rate of the economy
+              (3–5% for developed markets, 6–8% for India).<br>
+              <b>r:</b> WACC (for FCFF at WACC method) or r₀ (for FCFF at APV method).<br>
+              <b>TV % of total value:</b> In practice, TV accounts for 40–80% of
+              enterprise value. Small changes in g have large impacts —
+              a 1% increase in g on a 10× multiple firm changes TV by ~10–15%.
+              </p>
+            </div>
+            <div class="info-box" style="margin-top:10px;">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">Why Tax is on EBIT, not EBT, in FCFF</h4>
+              <p style="font-size:0.82rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              In FCFF, we compute <b>EBIT × (1−T_c)</b> — tax on operating profit
+              as if the firm has no debt. This gives a capital-structure-neutral
+              cash flow. The tax benefit of interest (tax shield) is NOT lost —
+              it is captured in the <b>denominator (WACC uses k_d(1−T_c))</b>
+              or separately in APV.<br><br>
+              <b>RULE:</b> If you remove the interest tax shield from the numerator
+              (FCFF), you MUST capture it in the denominator (WACC) or
+              explicitly (APV). Never double-count or ignore it.
+              </p>
+            </div>
+            """)
+
+    # ── EDU TAB 4: WACC Method ────────────────────────────────────────────────
+    with edu_tabs[3]:
+        sec("WACC Method — Full Framework")
+
+        c1, c2 = st.columns(2)
+        with c1:
+            st.html(f"""
+            <div class="info-box">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">Step-by-Step WACC Valuation</h4>
+              <p style="font-size:0.85rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              <b>Step 1:</b> Estimate β_U from comparable firms (unlever their β_L).<br>
+              <b>Step 2:</b> Relever β_U at target D/E using Hamada equation.<br>
+              <b>Step 3:</b> Compute k_e via CAPM: k_e = Rf + β_L × ERP.<br>
+              <b>Step 4:</b> Compute WACC: (E/V)×k_e + (D/V)×k_d×(1−T_c).<br>
+              <b>Step 5:</b> Project FCFF for 5–10 years.<br>
+              <b>Step 6:</b> Compute Terminal Value at end of forecast horizon.<br>
+              <b>Step 7:</b> Discount all FCFFs + TV at WACC to get Enterprise Value.<br>
+              <b>Step 8:</b> Subtract market value of debt to get Equity Value.
+              </p>
+            </div>
+            <div class="info-box" style="margin-top:10px;">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">When to Use WACC</h4>
+              <p style="font-size:0.82rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              ✅ <b>Stable capital structure</b> — D/V or D/E maintained at a constant target.<br>
+              ✅ <b>Publicly traded firm</b> — market value weights observable.<br>
+              ✅ <b>Steady-state operations</b> — no complex debt schedules.<br>
+              ❌ <b>Changing leverage</b> — WACC changes year-by-year if D/E changes significantly.<br>
+              ❌ <b>LBO or project finance</b> — debt repaid on a schedule; use APV.
+              </p>
+            </div>
+            """)
+
+        with c2:
+            st.html(f"""
+            <div class="info-box">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">WACC — Key Formulas</h4>
+              <div class="formula-box">β_L = β_U × [1 + (1−T_c) × D/E]</div>
+              <div class="formula-box">k_e = Rf + β_L × ERP</div>
+              <div class="formula-box">WACC = (E/V)×k_e + (D/V)×k_d×(1−T_c)</div>
+              <div class="formula-box">EV   = Σ FCFF_t/(1+WACC)^t  +  TV/(1+WACC)^N</div>
+              <div class="formula-box">TV   = FCFF_N×(1+g) / (WACC−g)</div>
+              <div class="formula-box">Equity Value = EV  −  Market Value of Debt</div>
+            </div>
+            <div class="info-box" style="margin-top:10px;">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">Constant D/V vs Constant D/E</h4>
+              <p style="font-size:0.82rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              <b>Constant D/V ratio:</b> Debt is a fixed percentage of enterprise value.
+              As EV grows, debt grows too. WACC stays constant.<br>
+              <b>Constant D/E ratio:</b> Debt-to-equity is fixed. Weights are
+              computed from D/(D+E). Also gives constant WACC.<br>
+              <b>Harris-Pringle vs Miles-Ezzell:</b> If D is rebalanced continuously
+              (to maintain target leverage), discount tax shields at r₀ (Harris-Pringle).
+              If rebalanced once per period, use k_d (Miles-Ezzell).
+              </p>
+            </div>
+            """)
+
+    # ── EDU TAB 5: APV Method ─────────────────────────────────────────────────
+    with edu_tabs[4]:
+        sec("APV Method — Adjusted Present Value")
+
+        c1, c2 = st.columns(2)
+        with c1:
+            st.html(f"""
+            <div class="info-box">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">APV Framework — Myers (1974)</h4>
+              <p style="font-size:0.85rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              Stewart Myers proposed APV as a two-step approach:
+              <b>value the firm as if unlevered, then add the financing side effects.</b>
+              </p>
+              <div class="formula-box">V_L  =  V_U  +  PV(Tax Shield)  −  PV(Distress Costs)</div>
+              <div class="formula-box">V_U  =  Σ FCFF_t / (1+r₀)^t  +  TV / (1+r₀)^N</div>
+              <p style="font-size:0.82rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              <b>Transparent:</b> Each financing side effect is valued separately
+              and explicitly — you can see exactly how much each item contributes.<br>
+              <b>Flexible:</b> Handles any debt schedule — fixed amount, amortising,
+              bullet repayment, or proportional. WACC cannot easily handle these.
+              </p>
+            </div>
+            <div class="info-box" style="margin-top:10px;">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">Three Tax Shield Scenarios</h4>
+              <div class="formula-box">Perpetual debt:  PV(TS) = T_c × D</div>
+              <div class="formula-box">Finite N-year:   PV(TS) = TS_annual × [1−(1+k_d)^−N] / k_d</div>
+              <div class="formula-box">Rebalanced D/V:  PV(TS) = T_c × D  (discounted at r₀)</div>
+              <p style="font-size:0.82rem;line-height:1.8;color:{TP};-webkit-text-fill-color:{TP};">
+              <b>Discount rate for tax shields:</b><br>
+              — Fixed (certain) debt → discount at k_d (same risk as debt).<br>
+              — Debt rebalanced to firm value → discount at r₀ (same risk as assets).<br>
+              — Finite debt → year-by-year at k_d using annuity formula.
+              </p>
+            </div>
+            """)
+
+        with c2:
+            st.html(f"""
+            <div class="info-box">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">WACC vs APV — When Each Applies</h4>
+              <table style="width:100%;font-size:0.82rem;border-collapse:collapse;">
+                <tr style="border-bottom:1px solid rgba(255,215,0,0.3);">
+                  <th style="color:{GD};padding:5px;text-align:left;">Criterion</th>
+                  <th style="color:{GD};padding:5px;">WACC</th>
+                  <th style="color:{GD};padding:5px;">APV</th>
+                </tr>
+                <tr style="border-bottom:1px solid rgba(255,255,255,0.07);">
+                  <td style="padding:4px;color:{LB};">Debt policy</td>
+                  <td style="padding:4px;">Proportional (D/V stable)</td>
+                  <td style="padding:4px;">Fixed quantum known</td>
+                </tr>
+                <tr style="border-bottom:1px solid rgba(255,255,255,0.07);">
+                  <td style="padding:4px;color:{LB};">Tax shield</td>
+                  <td style="padding:4px;">Implicit in rate</td>
+                  <td style="padding:4px;">Explicit, visible</td>
+                </tr>
+                <tr style="border-bottom:1px solid rgba(255,255,255,0.07);">
+                  <td style="padding:4px;color:{LB};">Changing leverage</td>
+                  <td style="padding:4px;">Needs re-computation</td>
+                  <td style="padding:4px;">Handled naturally</td>
+                </tr>
+                <tr style="border-bottom:1px solid rgba(255,255,255,0.07);">
+                  <td style="padding:4px;color:{LB};">Best for</td>
+                  <td style="padding:4px;">Mature stable firms</td>
+                  <td style="padding:4px;">LBOs, project finance</td>
+                </tr>
+                <tr>
+                  <td style="padding:4px;color:{LB};">Equivalence</td>
+                  <td style="padding:4px;" colspan="2">Identical if same debt assumption</td>
+                </tr>
+              </table>
+            </div>
+            <div class="info-box" style="margin-top:10px;">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">Why WACC ≠ APV in Practice</h4>
+              <p style="font-size:0.82rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              If both methods use <b>identical debt assumptions</b>, they must
+              give the same answer. Differences arise because:<br>
+              • WACC assumes debt proportional to EV (grows with the firm).<br>
+              • APV typically uses fixed debt (specific known amount).<br>
+              Higher debt under WACC → larger embedded tax shield → higher EV.
+              This is not model error — it reflects genuinely different
+              capital structure policies.
+              </p>
+            </div>
+            """)
+
+    # ── EDU TAB 6: Debt & Tax Shield ─────────────────────────────────────────
+    with edu_tabs[5]:
+        sec("Debt — Types, Cost, and Tax Shield")
+
+        c1, c2 = st.columns(2)
+        with c1:
+            st.html(f"""
+            <div class="info-box">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">Types of Debt</h4>
+              <p style="font-size:0.85rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              <b>Senior Secured:</b> First lien on assets. Lowest risk, lowest cost.
+              Bank loans, term loans.<br>
+              <b>Senior Unsecured:</b> No specific collateral. Corporate bonds,
+              debentures. Slightly higher cost.<br>
+              <b>Subordinated / Mezzanine:</b> Junior claim. Higher cost. Often
+              includes equity kickers (warrants).<br>
+              <b>Convertible Debt:</b> Can convert to equity at a set price.
+              Priced as bond + call option. Hybrid instrument.<br>
+              <b>Perpetual Debt:</b> Never matures. Coupon paid forever.
+              PV of tax shield = T_c × D (Gordon Growth perpetuity).<br>
+              <b>Finite / Bullet Debt:</b> Repaid in full at maturity. Tax shield
+              is a finite annuity. PV = TS × [1−(1+k_d)^−N] / k_d.
+              </p>
+            </div>
+            <div class="info-box" style="margin-top:10px;">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">Cost of Debt — Estimation</h4>
+              <div class="formula-box">k_d (pre-tax)  = YTM of the firm's bonds</div>
+              <div class="formula-box">k_d (after-tax) = k_d × (1 − T_c)</div>
+              <p style="font-size:0.82rem;line-height:1.8;color:{TP};-webkit-text-fill-color:{TP};">
+              <b>YTM:</b> Yield to Maturity — discount rate that equates bond price
+              to PV of coupons + principal. Market-based, forward-looking.<br>
+              <b>Credit rating approach:</b> Use yield spread over G-Sec
+              for the firm's credit rating.<br>
+              <b>Ke always &gt; Kd:</b> Equity is riskier — it is the residual
+              claim. In bankruptcy, debtholders are paid first.
+              </p>
+            </div>
+            """)
+
+        with c2:
+            st.html(f"""
+            <div class="info-box">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">Interest Tax Shield — The Core Benefit of Debt</h4>
+              <p style="font-size:0.85rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              Interest payments reduce taxable income. The government effectively
+              subsidises a portion of the interest cost:
+              </p>
+              <div class="formula-box">Annual Tax Shield  =  k_d × D × T_c</div>
+              <div class="formula-box">PV(TS) = T_c × D          [Perpetual debt, discount at k_d]</div>
+              <div class="formula-box">PV(TS) = T_c × D × k_d / k_d = T_c × D  ✓</div>
+              <p style="font-size:0.82rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              <b>Example:</b> D = ₹500 Cr, k_d = 9%, T_c = 30%.<br>
+              Annual TS = 9% × 500 × 30% = ₹13.5 Cr per year.<br>
+              PV(TS perpetual) = 30% × 500 = ₹150 Cr.<br>
+              Every rupee of permanent debt adds T_c = ₹0.30 to firm value.
+              </p>
+            </div>
+            <div class="info-box" style="margin-top:10px;">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">Debt Capacity — Practical Limits</h4>
+              <p style="font-size:0.82rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              Although more debt adds tax shield value, practical constraints limit leverage:<br>
+              • <b>Debt covenants:</b> Lenders impose financial ratios
+                (DSCR ≥ 1.2×, Debt/EBITDA ≤ 4×).<br>
+              • <b>Credit rating:</b> Higher leverage → lower credit rating →
+                higher k_d → partially offsets the tax shield benefit.<br>
+              • <b>Financing flexibility:</b> Highly levered firms lose ability
+                to raise debt quickly for growth opportunities.<br>
+              • <b>Bankruptcy risk:</b> Rising P(default) increases expected
+                bankruptcy costs — covered in Tab 7.
+              </p>
+            </div>
+            """)
+
+    # ── EDU TAB 7: Bankruptcy & Distress ─────────────────────────────────────
+    with edu_tabs[6]:
+        sec("Bankruptcy, Financial Distress & Expected Costs")
+
+        c1, c2 = st.columns(2)
+        with c1:
+            st.html(f"""
+            <div class="info-box">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">Financial Distress — Stages</h4>
+              <p style="font-size:0.85rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              <b>1. Financial Distress:</b> Firm cannot service debt obligations from
+              current operating cash flows. Covenant breaches, missed interest.<br>
+              <b>2. Technical Insolvency:</b> Total liabilities exceed total assets
+              on a book-value basis. Negative net worth.<br>
+              <b>3. Legal Bankruptcy:</b> Court-supervised process.
+              In India — Insolvency and Bankruptcy Code (IBC) 2016,
+              CIRP within 270 days (extendable to 330).<br>
+              <b>4. Liquidation:</b> Assets sold, proceeds distributed
+              in priority order: secured creditors → unsecured → equity.
+              </p>
+            </div>
+            <div class="info-box" style="margin-top:10px;">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">Direct Bankruptcy Costs</h4>
+              <p style="font-size:0.82rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              Out-of-pocket cash expenses triggered by the formal process:<br>
+              • <b>Legal fees:</b> Bankruptcy counsel, litigation (1–4% of assets).<br>
+              • <b>Administrative:</b> Court fees, trustee, accountants.<br>
+              • <b>Restructuring advisory:</b> Investment banker fees (0.5–1.5%).<br>
+              <b>Empirical evidence:</b><br>
+              Warner (1977): 5.3% — Weiss (1990): 3.1%<br>
+              LoPucki &amp; Doherty (2004): 1.4–3.9% (large Ch. 11)<br>
+              IBBI India (2022): 2–6% of resolution value (CIRP cases)
+              </p>
+            </div>
+            """)
+
+        with c2:
+            st.html(f"""
+            <div class="info-box">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">Indirect Bankruptcy Costs — The Hidden Majority</h4>
+              <p style="font-size:0.85rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              Indirect costs arise before formal bankruptcy during the distress period
+              and are typically far larger than direct costs:
+              </p>
+              <p style="font-size:0.82rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              • <b>Lost sales / market share:</b> Customers avoid distressed suppliers
+                (especially for durable goods needing after-sales service).
+                Opler &amp; Titman (1994): distressed firms lose <b>26% more market share</b>
+                than healthy peers during downturns.<br>
+              • <b>Management distraction:</b> Executives spend 10–20% of time on
+                restructuring vs operations (Gilson et al. 1990).<br>
+              • <b>Debt overhang (Myers 1977):</b> Shareholders reject positive-NPV
+                projects when gains primarily accrue to debtholders.<br>
+              • <b>Asset fire sales:</b> Distressed assets sold at 20–40% discounts
+                (Shleifer &amp; Vishny 1992).<br>
+              • <b>Supplier credit tightening:</b> Trade creditors demand prepayment.<br>
+              • <b>Altman (1984):</b> Total costs 11–17% of assets.<br>
+              • <b>Andrade &amp; Kaplan (1998):</b> 10–23% of pre-distress firm value.
+              </p>
+            </div>
+            <div class="info-box" style="margin-top:10px;">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">Expected Bankruptcy Cost</h4>
+              <div class="formula-box">E[BC]  =  P(Bankruptcy)  ×  Total Bankruptcy Cost</div>
+              <p style="font-size:0.82rem;line-height:1.8;color:{TP};-webkit-text-fill-color:{TP};">
+              The <b>probability-weighted</b> cost of financial distress.
+              P(Bankruptcy) rises non-linearly with leverage — at first slowly,
+              then accelerating. This non-linearity is what creates the
+              interior optimum in the Trade-Off Theory.
+              </p>
+            </div>
+            """)
+
+    # ── EDU TAB 8: Trade-Off Theory ───────────────────────────────────────────
+    with edu_tabs[7]:
+        sec("Trade-Off Theory — Optimal Capital Structure")
+
+        c1, c2 = st.columns(2)
+        with c1:
+            st.html(f"""
+            <div class="info-box">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">The Trade-Off Theory Framework</h4>
+              <p style="font-size:0.85rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              Combines the tax shield benefit of MM (1963) with the bankruptcy
+              cost penalty to find a finite, interior optimal capital structure:
+              </p>
+              <div class="formula-box">V_L  =  V_U  +  T_c × D  −  PV(Expected Bankruptcy Costs)</div>
+              <div class="formula-box">V_L  =  V_U  +  T_c × D  −  P(B) × BC</div>
+              <p style="font-size:0.82rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              <b>Tax shield term T_c × D:</b> Rises linearly with debt.
+              Each ₹1 of permanent debt adds ₹T_c to firm value.<br>
+              <b>Bankruptcy cost term P(B) × BC:</b> Rises non-linearly —
+              slowly at first, then accelerating as the firm becomes highly levered.<br>
+              <b>Optimum:</b> Where the marginal tax shield gain equals the marginal
+              increase in expected bankruptcy cost.
+              </p>
+            </div>
+            <div class="info-box" style="margin-top:10px;">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">Static vs Dynamic Trade-Off</h4>
+              <p style="font-size:0.82rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              <b>Static Trade-Off:</b> Firm immediately adjusts to optimal D/V.
+              In practice, adjustment costs (issuance fees, taxes on equity sales)
+              prevent instantaneous rebalancing.<br>
+              <b>Dynamic Trade-Off:</b> Firms have a target leverage range, not
+              a single point. They gradually rebalance toward the target when
+              deviation becomes too costly. Explains why observed D/V ratios
+              vary around the optimum.
+              </p>
+            </div>
+            """)
+
+        with c2:
+            st.html(f"""
+            <div class="info-box">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">Pecking Order Theory (Alternative)</h4>
+              <p style="font-size:0.85rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              Myers &amp; Majluf (1984) proposed that information asymmetry between
+              managers and investors drives a <b>financing hierarchy</b>:
+              </p>
+              <p style="font-size:0.82rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              <b>1st choice: Internal funds</b> (retained earnings) — no information
+              cost, no dilution, no new securities to price.<br>
+              <b>2nd choice: Debt</b> — limited information problem; debtholders
+              care mainly about downside risk.<br>
+              <b>3rd choice: Equity</b> — most information-sensitive; issuing equity
+              signals managers think stock is overpriced → share price falls.<br><br>
+              Pecking order predicts no optimal D/V ratio — firms simply choose
+              the cheapest available financing source at each point in time.
+              </p>
+            </div>
+            <div class="info-box" style="margin-top:10px;">
+              <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">Industry-Specific Capital Structure Patterns</h4>
+              <p style="font-size:0.82rem;line-height:1.85;color:{TP};-webkit-text-fill-color:{TP};">
+              <b>High leverage industries:</b> Utilities, real estate, airlines,
+              telecom. Stable cash flows support high debt service.<br>
+              <b>Low leverage industries:</b> Technology, pharma, biotech.
+              High growth options, intangible assets (lose value in bankruptcy).<br>
+              <b>Why?</b> Asset tangibility affects bankruptcy costs —
+              tangible assets retain value in liquidation; intangibles (R&amp;D,
+              brand, human capital) are destroyed.<br>
+              <b>Indian context:</b> IBC 2016 has improved creditor rights.
+              Higher recovery rates → lower expected bankruptcy costs →
+              higher optimal debt capacity for Indian firms post-2016.
+              </p>
+            </div>
+            """)
+
+    # ── EDU TAB 9: Quick Reference ────────────────────────────────────────────
+    with edu_tabs[8]:
+        sec("📋 Quick Reference — All Formulas")
+
+        formulas = [
+            ("FCFF",                "EBIT×(1−Tc) + Dep − CapEx − ΔNWC",
+             "Discount at WACC → EV"),
+            ("NOPAT",               "EBIT × (1 − Tc)",
+             "After-tax operating profit, no debt effect"),
+            ("WACC",                "(E/V)×ke + (D/V)×kd×(1−Tc)",
+             "Market value weights always"),
+            ("Levered Beta",        "βL = βU × [1 + (1−Tc) × D/E]",
+             "Hamada Equation — adds financial risk"),
+            ("Unlevered Beta",      "βU = βL / [1 + (1−Tc) × D/E]",
+             "Strip out financial risk"),
+            ("Cost of Equity",      "ke = Rf + βL × ERP",
+             "CAPM — requires levered beta"),
+            ("Unlevered Cost r₀",   "r₀ = Rf + βU × ERP",
+             "All-equity discount rate for APV"),
+            ("MM No Tax",           "V_L = V_U",
+             "Capital structure irrelevant"),
+            ("MM With Tax",         "V_L = V_U + Tc × D",
+             "Perpetual debt — optimal = 100% debt"),
+            ("MM Prop II (No Tax)", "ke = k₀ + (k₀ − kd) × D/E",
+             "ke rises linearly with leverage"),
+            ("MM Prop II (Tax)",    "ke = rA + (rA − kd)(1−Tc) × D/E",
+             "ke rises less due to tax shield"),
+            ("APV",                 "V_L = V_U + PV(Tax Shield)",
+             "Explicit financing side effects"),
+            ("TV (Gordon Growth)",  "TV = FCFF_N × (1+g) / (r − g)",
+             "g < r always; g ≤ nominal GDP"),
+            ("PV(TS) Perpetual",    "T_c × D",
+             "Permanent debt, discount at kd"),
+            ("PV(TS) Finite",       "TS_annual × [1−(1+kd)^−N] / kd",
+             "N-year annuity at kd"),
+            ("Expected BC",         "P(Bankruptcy) × Total Bankruptcy Cost",
+             "Trade-Off Theory penalty term"),
+            ("Trade-Off V_L",       "V_U + Tc×D − P(B)×BC",
+             "Interior optimal D where marginal TS = marginal EBC"),
+            ("NI Theory V",         "E = NI / ke  then  V = E + D",
+             "ke constant → WACC falls → V rises"),
+            ("NOI Theory V",        "V = NOI / k₀  then  E = V − D",
+             "k₀ constant → ke rises → WACC constant"),
+            ("Equity Value",        "V_L − Market Value of Debt",
+             "Enterprise value minus debt"),
+        ]
+
+        fml_df = pd.DataFrame(formulas, columns=["Concept", "Formula", "Key Note"])
+        st.dataframe(
+            fml_df.style
+            .set_properties(**{"font-family": "JetBrains Mono,monospace",
+                               "font-size": "11px", "text-align": "left"})
+            .set_table_styles([
+                {"selector": "th", "props": [("background-color", DB),
+                                              ("color", GD), ("font-weight", "700"),
+                                              ("font-size", "11px")]},
+                {"selector": "td:first-child", "props": [("color", LB),
+                                                          ("font-weight", "600")]},
+            ]),
+            use_container_width=True, hide_index=True
+        )
+
+        st.markdown("")
+        st.html(f"""
+        <div class="info-box">
+          <h4 style="color:{GD};-webkit-text-fill-color:{GD};margin-top:0;">
+            📌 The One-Page Mental Model
+          </h4>
+          <p style="font-size:0.88rem;line-height:2.0;color:{TP};-webkit-text-fill-color:{TP};">
+          <b style="color:{LB};-webkit-text-fill-color:{LB};">Step 1 — Project FCFF:</b>
+          Build bottom-up from Revenue → EBIT → NOPAT → add Dep → subtract CapEx and ΔNWC.<br>
+          <b style="color:{LB};-webkit-text-fill-color:{LB};">Step 2 — Terminal Value:</b>
+          FCFF_N × (1+g) / (r−g). Justify g ≤ long-run GDP. Note TV is typically 60–80% of EV.<br>
+          <b style="color:{LB};-webkit-text-fill-color:{LB};">Step 3 — Choose method:</b>
+          WACC if stable leverage. APV if debt is fixed or changes on a schedule.<br>
+          <b style="color:{LB};-webkit-text-fill-color:{LB};">Step 4 — Estimate costs:</b>
+          β_U from comps → relever at target D/E → k_e via CAPM → WACC.<br>
+          Or: r₀ = Rf + β_U × ERP for APV.<br>
+          <b style="color:{LB};-webkit-text-fill-color:{LB};">Step 5 — Discount:</b>
+          Σ FCFF/(1+r)^t + TV/(1+r)^N.<br>
+          <b style="color:{LB};-webkit-text-fill-color:{LB};">Step 6 — Tax Shield (APV only):</b>
+          Add PV(TS) to get V_L.<br>
+          <b style="color:{LB};-webkit-text-fill-color:{LB};">Step 7 — Equity Value:</b>
+          Subtract market value of debt from Enterprise Value.<br>
+          <b style="color:{LB};-webkit-text-fill-color:{LB};">Step 8 — Sense check:</b>
+          Is TV% reasonable (40–80%)? Is g ≤ r? Does equity value make intuitive sense?
+          </p>
+        </div>
+        """)
+
+
 
 footer()
